@@ -1,71 +1,24 @@
-#! /usr/bin/python
+#! /usr/bin/env python
 
-import csv
 import sys
 import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib
+import matplotlib.pyplot as plt
+import plot_ColorContrast as contrast
+from csv_interpreter import csv_interpreter as reader
 
 ot_data = []
+# plot_mode = sys.argv[2] # 0: Lump; 1: Interval Increment
 
-def cmap_map(function, cmap):
-    cdict = cmap._segmentdata
-    step_dict = {}
-    for key in ('red', 'green', 'blue'):
-        step_dict[key] = list(map(lambda x: x[0], cdict[key]))
-    step_list = sum(step_dict.values(), [])
-    step_list = np.array(list(set(step_list)))
-    reduced_cmap = lambda step : np.array(cmap(step)[0:3])
-    old_LUT = np.array(list(map(reduced_cmap, step_list)))
-    new_LUT = np.array(list(map(function, old_LUT)))
-    cdict = {}
-    for i, key in enumerate(['red','green','blue']):
-        this_cdict = {}
-        for j, step in enumerate(step_list):
-            if step in step_dict[key]:
-                this_cdict[step] = new_LUT[j, i]
-            elif new_LUT[j,i] != old_LUT[j, i]:
-                this_cdict[step] = new_LUT[j, i]
-        colorvector = list(map(lambda x: x + (x[1], ), this_cdict.items()))
-        colorvector.sort()
-        cdict[key] = colorvector
-    return matplotlib.colors.LinearSegmentedColormap('colormap',cdict,1024)
+############################### Data Parser #####################################
+# parser to convert csv data into dictionary form with variable types corrected
+csv_data = reader()
+ot_data = csv_data.parse(sys.argv[1])
 
-
-# Header Checker and Adder [Header fileds are hardcoded] 'log_ot_20200416_171758.csv'
-with open(sys.argv[1], 'r') as f:
-    read = csv.reader(f)
-    data = [line for line in read]
-
-    if (data[0][0]) != 'time':
-        new_data = [['time', 'model_name', 'model_type', 'x', 'y', 'z', 'yaw', 'level_name']]
-        # print(len(data))
-
-        for count in range(len(data)):
-            new_data.append(data[count])
-        data = new_data
-        # print(len(data))
-
-        with open(sys.argv[1], 'w') as f:
-            write = csv.writer(f)
-            write.writerows(data)
-
-# Data Cleanup [data conversion to dict and variable typing]
-with open(sys.argv[1], 'r') as f:
-   for row in csv.DictReader(f):
-       ot_data.append(dict(row))
-
-for variable in ot_data:
-   variable['time'] = float(variable['time'])
-   variable['x'] = round(float(variable['x'])*2)/(2.0)
-   variable['y'] = round(float(variable['y'])*2)/(2.0)
-   #variable['z'] = float(variable['z'])
-   #variable['yaw'] = float(variable['yaw'])
-   # only the variable of interest will be processed
-
-# Data processing
+############################## Data processing ##################################
 data_time_max = ot_data[len(ot_data)-1]['time']
-interest_max_time = data_time_max # can be changed later to time duration of interest
+
+interest_max_time = data_time_max 
 interest_min_time = 0.0
 coord_data = [] # x, y
 traffic_data = [] # x, y, count
@@ -113,12 +66,12 @@ color_by = traffic_density_log
 max_color_by = 0.8 * max(color_by)
 min_color_by = min(color_by)
 
-dark_cmap = cmap_map(lambda x : x*0.85, matplotlib.cm.bwr)
+dark_cmap = contrast.cmap_map(lambda x : x*0.85, matplotlib.cm.bwr)
 
-plt.figure(figsize = (25, 15))
+plt.figure(figsize = (30, 20))
 plt.scatter(x_axis, y_axis, 
             c = color_by, 
-            s =15, marker='o', 
+            s = 20, marker='o', 
             alpha = '0.9',
             cmap = dark_cmap,
             vmin = min_color_by,
@@ -128,6 +81,5 @@ plt.colorbar(label = 'Traffic Density')
 plt.xlabel('X Coordinate, metres')
 plt.ylabel('Y Coordinate, metres')
 plt.title('Traffic Heatmap')
-plt.savefig("heatmap.pdf")
+plt.savefig("heatmap.png")
 plt.show()
-
