@@ -14,4 +14,14 @@ The heatmap_visualiser.py will
 
 ##  ** How to run **
 
-run `python heatmap_visualiser <*.csv file>`
+run `python heatmap_visualiser <*.csv file> <plot mode value>`
+
+
+### plot mode feature
+
+The plot mode feature is currently still in development. The purpose is allow the selection of data visualisation modes. The current modes are:
+
+- Overall data visualisation: plot mode value = 0
+- Interval Incremental visualisation: plot mode value = 1
+
+The interval incremental visualisation is to allow the user to study the changes of the traffic density as the time frame increases. The time interval is currently hardcoded within the `heatmap_visualiser.py` under the `interval` variable. Current, implementation of the interval imcremental visualisation requires the user to close each data plot before the next interval set is processed.
