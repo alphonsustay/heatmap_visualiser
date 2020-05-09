@@ -13,6 +13,7 @@ The heatmap_visualiser.py will
 4) All the relevant plots / animation will be saved in sub-folders found in the `img/` folder. The saved folders will follow the respective naming convention [YYYYMMDD_HHMM]
 
 ** The `plot_ColorContrast.py` is an added function to make adjustments to the color contrast of the Traffic Density scale. This is to make the plots more visable
+** The background of the plot can be modified within the `heatmap_visualiser.py` under the `imread` function in line 107.
 
 ##  ** How to run **
 

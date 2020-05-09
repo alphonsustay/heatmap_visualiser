@@ -43,8 +43,8 @@ class csv_interpreter():
         # Variable X, Y are adjusted to the submeter granularity
         for variable in parsed_data:
             variable['time'] = float(variable['time'])
-            variable['x'] = round(float(variable['x'])*2)/(2.0)
-            variable['y'] = round(float(variable['y'])*2)/(2.0)
+            variable['x'] = round(float(variable['x'])*2)/(2.0) #round(float(variable['x']), 1)
+            variable['y'] = round(float(variable['y'])*2)/(2.0) #round(float(variable['y']), 1)
             #variable['z'] = float(variable['z'])
             #variable['yaw'] = float(variable['yaw'])
             # only the variable of interest will be processed

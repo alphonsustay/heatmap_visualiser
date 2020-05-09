@@ -3,5 +3,6 @@ archive/
 Option_A/
 Option_B/
 heatmap_detection.py
+heatmap_instance.py
 .vscode/
 background.png
